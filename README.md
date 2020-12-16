@@ -1,5 +1,16 @@
 # ASCIIfyer
 
+[![Crates.io][crates-badge]][crates-url]
+[![Docs]][docs-badge][docs-url]
+[![Apache 2.0 licensed][apache-badge]][apache-url]
+
+[crates-badge]: https://img.shields.io/crates/v/asciifyer.svg
+[crates-url]: https://crates.io/crates/asciifyer
+[docs-badge]: https://docs.rs/asciifyer/badge.svg
+[docs-url]: https://docs.rs/asciifyer
+[apache-badge]: https://img.shields.io/crates/l/asciifyer
+[apache-url]: https://github.com/EbonJaeger/asciifyer/blob/main/README.md
+
 This crate provides an easy way to turn a normal image into an ASCII picture. Supported image formats are the ones that the `image` crate supports; [see here](https://github.com/image-rs/image#supported-image-formats) for the list.
 
 By default, images are resized to 250x250 pixels before turning them into ASCII. You can override this by passing a `Dimension` struct with a width and height. If the image is smaller than the dimensions, it will not be resized.
