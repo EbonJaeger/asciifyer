@@ -8,7 +8,7 @@ use tempfile::tempfile;
 /// The set of characters to use in an ASCII image. The positioning
 /// of characters in the array is important because that position
 /// is how they are mapped based on the brightness of a pixel.
-const CHARACTER_SET: [&str; 11] = ["@", "#", "0", "O", "L", ";", ":", ".", ",", "'", " "];
+const CHARACTER_SET: [&str; 11] = [" ", "'", ",", ".", ":", ";", "/", "O", "0", "#", "@"];
 
 /// Opens an image at a path and turns it into an ASCII string.
 /// Images will be scaled down by the amount provided before being
@@ -30,11 +30,11 @@ pub fn convert_to_ascii<S: AsRef<OsStr> + ?Sized>(path: &S, scale: Option<u32>) 
     // TODO: Handle this failing
     if let Ok(image) = image::open(&path) {
         let mut last_y = 0;
-        let resolution = scale.unwrap_or(1);
+        let scale = scale.unwrap_or(1);
 
         let image = image.resize(
-            image.width() / resolution,
-            image.height() / resolution,
+            image.width() / scale,
+            image.height() / scale,
             FilterType::Nearest,
         );
 
@@ -48,7 +48,10 @@ pub fn convert_to_ascii<S: AsRef<OsStr> + ?Sized>(path: &S, scale: Option<u32>) 
             let rgba = pixel.2;
 
             // Calculate the brightness using the RGB values of the pixel
-            let brightness: f64 = ((rgba[0] as u64 + rgba[1] as u64 + rgba[2] as u64) / 3) as f64;
+            // Formula taken from: https://stackoverflow.com/questions/596216/formula-to-determine-brightness-of-rgb-color
+            let brightness: f64 = ((0.2126 * rgba[0] as f64)
+                + (0.7152 * rgba[0] as f64)
+                + (0.0722 * rgba[0] as f64)) as f64;
             let position =
                 ((brightness / 255.0) * (CHARACTER_SET.len() - 1) as f64).round() as usize;
             art.push_str(CHARACTER_SET[position])
