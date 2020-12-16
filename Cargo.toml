@@ -1,7 +1,12 @@
 [package]
 name = "asciifyer"
+description = "Rust library to easily turn images into ASCII art"
 version = "0.1.0"
 authors = ["Evan Maddock <maddock.evan@vivaldi.net>"]
+categories = ["multimedia::images"]
+keywords = ["ascii", "graphics", "images"]
+repository = "https://github.com/EbonJaeger/asciifyer"
+license = "Apache-2.0"
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
