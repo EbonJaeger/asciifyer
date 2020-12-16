@@ -80,8 +80,8 @@ pub fn convert_to_ascii<S: AsRef<OsStr> + ?Sized>(
             // Calculate the brightness using the RGB values of the pixel
             // Formula taken from: https://stackoverflow.com/questions/596216/formula-to-determine-brightness-of-rgb-color
             let brightness: f64 = ((0.2126 * rgba[0] as f64)
-                + (0.7152 * rgba[0] as f64)
-                + (0.0722 * rgba[0] as f64)) as f64;
+                + (0.7152 * rgba[1] as f64)
+                + (0.0722 * rgba[2] as f64)) as f64;
             let position =
                 ((brightness / 255.0) * (CHARACTER_SET.len() - 1) as f64).round() as usize;
             art.push_str(CHARACTER_SET[position])
