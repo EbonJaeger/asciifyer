@@ -10,33 +10,63 @@ use tempfile::tempfile;
 /// is how they are mapped based on the brightness of a pixel.
 const CHARACTER_SET: [&str; 11] = [" ", "'", ",", ".", ":", ";", "/", "O", "0", "#", "@"];
 
+/// Image dimension with a width and a height.
+pub struct Dimension {
+    width: u32,
+    height: u32,
+}
+
+impl Dimension {
+    /// Create a new dimension pair.
+    pub fn new(width: u32, height: u32) -> Self {
+        Dimension { width, height }
+    }
+
+    /// Get the width value of this dimension.
+    pub fn width(&self) -> u32 {
+        self.width
+    }
+
+    /// Get the height value of this dimension.
+    pub fn height(&self) -> u32 {
+        self.height
+    }
+}
+
 /// Opens an image at a path and turns it into an ASCII string.
-/// Images will be scaled down by the amount provided before being
-/// turned into an ASCII image.
+/// If the image is larger than the given dimensions, it will be
+/// resized to those dimensions. If `None` is passed, it will
+/// use a width and height of 250.
 ///
 /// # Example
 ///
 /// ```rust
-/// use asciifyer::convert_to_ascii;
+/// use asciifyer::{convert_to_ascii, Dimension};
 ///
 /// // Scale the image down by half
-/// let ascii_image = convert_to_ascii("./image1.png", 2);
+/// let dimensions = Dimension::new(300, 300);
+/// let ascii_image = convert_to_ascii("./image1.png", Some(dimensions));
 /// println!("{}", ascii_image);
 /// ```
-pub fn convert_to_ascii<S: AsRef<OsStr> + ?Sized>(path: &S, scale: Option<u32>) -> String {
+pub fn convert_to_ascii<S: AsRef<OsStr> + ?Sized>(
+    path: &S,
+    dimensions: Option<Dimension>,
+) -> String {
     let path = Path::new(path);
     let mut art = String::new();
 
     // TODO: Handle this failing
-    if let Ok(image) = image::open(&path) {
+    if let Ok(mut image) = image::open(&path) {
         let mut last_y = 0;
-        let scale = scale.unwrap_or(1);
+        let dimensions = dimensions.unwrap_or(Dimension {
+            width: 250,
+            height: 250,
+        });
 
-        let image = image.resize(
-            image.width() / scale,
-            image.height() / scale,
-            FilterType::Nearest,
-        );
+        // Resize if needed
+        if image.width() > dimensions.width() || image.height() > dimensions.height() {
+            image = image.resize(dimensions.width(), dimensions.height(), FilterType::Nearest);
+        }
 
         for pixel in image.pixels() {
             // Check the y-value of the pixel to see if we need to add a newline
