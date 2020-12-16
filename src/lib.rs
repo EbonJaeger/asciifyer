@@ -1,8 +1,13 @@
 extern crate image;
 
 use image::{imageops::FilterType, GenericImageView};
+use std::{ffi::OsStr, path::Path};
+
+#[cfg(feature = "fetch")]
 use reqwest::IntoUrl;
-use std::{ffi::OsStr, fs::File, io::Write, path::Path};
+#[cfg(feature = "fetch")]
+use std::{fs::File, io::Write};
+#[cfg(feature = "fetch")]
 use tempfile::tempfile;
 
 /// The set of characters to use in an ASCII image. The positioning
@@ -94,6 +99,7 @@ pub fn convert_to_ascii<S: AsRef<OsStr> + ?Sized>(
 /// Downloads an image from a remote location, returning the temporary file
 /// with the image. The temporary file will automatically be removed when
 /// the last handle is closed.
+#[cfg(feature = "fetch")]
 pub async fn fetch_remote_image<T: IntoUrl>(url: T) -> Result<File, Box<dyn std::error::Error>> {
     let bytes = reqwest::get(url).await?.bytes().await?;
 
